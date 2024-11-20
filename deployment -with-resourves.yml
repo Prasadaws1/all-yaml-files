@@ -25,3 +25,40 @@ spec:
           limits:
             cpu: "200m"
             memory: "100Mi"
+########################### volume will mount them ################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flm1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: dev
+  template:
+    metadata:
+      labels:
+        env: dev
+
+    spec:
+      containers:
+        - name: cont1
+          image: httpd
+          command: ["/bin/bash", "-c", "while true; do echo welcome; sleep 5 ; done"]
+          volumeMounts:
+            - name: mynewvolume
+              mountPath: "/opt/docker"
+
+        - name: cont2
+          image: shaikmustafa/dm
+          command: ["/bin/bash", "-c", "while true; do echo welcome; sleep 5 ; done"]
+          volumeMounts:
+            - name: mynewvolume
+              mountPath: "/etc/jenkins"
+
+
+      volumes:
+        - name: mynewvolume
+          hostPath:
+            path: "/opt/mybackup"
