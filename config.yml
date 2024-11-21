@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-2
+
+spec:
+  containers:
+    - name: cont1
+      image: httpd
+
+      envFrom:
+        - configMapRef:
+            name: secondcm
+################################################################
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-3
+
+spec:
+  containers:
+    - name: cont2
+      image: httpd
+
+      env:
+        - name: flm
+          valueFrom:
+            configMapKeyRef:
+              key: power
+              name: secondcm
+
+       - name: flm
+          valueFrom:
+            configMapKeyRef:
+              key: power
+              name: secondcm
+            
+              
