@@ -1,0 +1,68 @@
+---
+apiVersion: v1
+kind: PersistantVolume
+metadata:
+  name: pv1
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  awsElasticBlockStore:
+    volumeID: vol-0c07e819ca016bb81
+    fsType: ext4
+##################################
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mypvc2
+
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+      ##############################################
+      ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydp3
+
+spec:
+  replicas: 5
+
+  selector:
+    matchLabels:
+      env: prod
+  template:
+    metadata:
+      labels:
+        env: prod
+    spec:
+      containers:
+        - name: cont1
+          image: shaikmustafa/netflix
+          command: ["/bin/bash", "-c", "while true; do echo welcome; sleep 5; done"]
+          volumeMounts:
+            - name: devops
+              mountPath: "/opt/jenkins"
+
+
+
+        - name: cont2
+          image: ubuntu
+          command: ["/bin/bash", "-c", "while true; do echo welcome; sleep 5; done"]
+          volumeMounts:
+            - name: devops
+              mountPath: "/etc/docker"
+
+      volumes:
+        - name: devops
+          persistentVolumeClaim:
+            claimName: mypvc2
+
